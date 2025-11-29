@@ -1,0 +1,26 @@
+# you can add your custom config paramteres as well.
+# just don't forget to update pydantic BaseModel classes
+# can be found at: src/core/shared/model.py
+
+data:
+  raw_location: raw
+  clean_location: clean
+  batch_size: 32
+  seed: 42
+
+train:
+  device: cuda   # 'cuda' or 'cpu'
+  epoch: 5
+  lr: 0.01
+  checkpoint_load_file: 
+  checkpoint_save_name: 
+  checkpoint_frequency: 0
+
+test:
+  device: cuda  # 'cuda' or 'cpu'
+  checkpoint_load_file: outputs/deneme/model.pth
+  batch_size: 16
+  plot_col_size: 4
+  plot_row_size: 4
+  plot_img_size: 2.5
+

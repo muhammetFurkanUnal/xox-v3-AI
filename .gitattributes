@@ -1,0 +1,6 @@
+# Git, dosyaları otomatik algılasın
+* text=auto
+
+# Script dosyaları her zaman LF (Linux standardı) olsun
+*.sh text eol=lf
+*.py text eol=lf
