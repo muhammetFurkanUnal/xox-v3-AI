@@ -1,6 +1,8 @@
 from pydantic import BaseModel
 from typing import List
 from enum import Enum
+from .exceptions import *
+import secrets
 
 class Player(Enum):
 	x = "X"
@@ -14,6 +16,7 @@ class GameState(BaseModel):
 	turn_num: int
 	winner: Player
 	draw: bool
+	game_id: str
 
 	model_config = {
 		"arbitrary_types_allowed":True
@@ -28,17 +31,18 @@ class XOXGame:
 		self.board : List[Player] = [Player.none for i in range(9)]
 		self.winner : Player = Player.none
 		self.draw : bool = False
+		self.game_id = secrets.token_hex(3)
 
 
 	def do_move(self, position):
 		if not (0 <= position <= 8):
-			raise ValueError("Position must be between 0 and 8")
+			raise InvalidPositionError("Position out of boundary!")
 
 		if self.winner != Player.none:
-			raise Exception("Game is finished already!")
+			raise GameOverError("Game is finished already!")
 
 		if self.board[position] != Player.none:
-			raise Exception("Position is not empty!")
+			raise PositionOccupiedError("Position is not empty!")
 		
 		self.board[position] = self.turn_who
 			
@@ -50,8 +54,6 @@ class XOXGame:
 				self.turn_who = Player.o
 			else:
 				self.turn_who = Player.x
-
-		return
 
 
 
@@ -85,7 +87,8 @@ class XOXGame:
             turn_who=self.turn_who,
             turn_num=self.turn_num,
             winner=self.winner,
-			draw=self.draw
+			draw=self.draw,
+			game_id=self.game_id
         )
 	
 
@@ -94,20 +97,32 @@ class XOXGame:
 
 
 	def __str__(self):
-		padding_x = 1 
+		padding_x = 1
+		
 		rows = [
 			" ".join(p.value for p in self.board[i : i+3]) 
 			for i in range(0, 9, 3)
 		]
-		raw_width = len(rows[0])
+		
+		raw_width = len(rows[0]) 
 		total_width = raw_width + (padding_x * 2)
 		
-		border = "-" * total_width
-		pad_str = " " * padding_x
+		col_headers = " ".join(str(i) for i in range(1, 4))
 		
-		padded_rows = [f"{pad_str}{row}{pad_str}" for row in rows]
+		gutter_size = 3 
+		gutter_space = " " * gutter_size 
 		
-		return f"{border}\n" + "\n".join(padded_rows) + f"\n{border}"
+		header_str = f"{' ' * (gutter_size + padding_x)}{col_headers}"
+		
+		padded_rows = []
+		for idx, row in enumerate(rows):
+			row_num = idx + 1
+			
+			pad_str = " " * padding_x
+			line = f"{row_num:<{gutter_size}}{pad_str}{row}{pad_str}"
+			padded_rows.append(line)
+			
+		return f"{header_str}\n" + "\n".join(padded_rows)
 
 
 

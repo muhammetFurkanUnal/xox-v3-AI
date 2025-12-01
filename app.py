@@ -1,14 +1,13 @@
 from src.core.shared import shared, Shared
 from src.core.arg_parser import args, Args, Mode
-from src.actions import DataActs, train, TestActs
-from src.models import AutoencoderManager
+from src.actions import gather_loop
 
 
 def main():        
 
-    if shared.mode == Mode.LOAD_DATA:
-        # write your data procedure here
-        pass
+    if shared.mode == Mode.GATHER_DATA:
+        dataset_file_path = shared.config.data.save_path
+        gather_loop(dataset_file_path)
 
     
     elif shared.mode == Mode.TRAIN:

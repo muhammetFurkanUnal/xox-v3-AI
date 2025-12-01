@@ -1,8 +1,6 @@
 from datetime import datetime
 import random
-
-from datetime import datetime
-import random
+import os
 
 def generate_id():
     now = datetime.now()
@@ -20,3 +18,7 @@ def get_datetime_str():
 def get_date_str():
     now = datetime.now()
     return f"{now.day}/{now.month}/{now.year}"
+
+
+def clear_terminal():
+    os.system('cls' if os.name == 'nt' else 'clear')

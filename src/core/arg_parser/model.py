@@ -5,7 +5,7 @@ from enum import Enum
 class Mode(Enum):
     TRAIN="train"
     TEST="test"
-    LOAD_DATA="load-data"
+    GATHER_DATA="gtr-data"
     TEXT_ANALYSIS = "text-anl"
     VISUALIZE = "visualize"
     DEBUG = "debug"

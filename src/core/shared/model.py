@@ -5,10 +5,9 @@ from pathlib import Path
 from typing import Optional, List
 
 class DataConfig(BaseModel):
-    raw_location: str
-    clean_location: str
     batch_size: int
     seed: int
+    save_path: Optional[str]
     
 
 class TrainConfig(BaseModel):
@@ -24,9 +23,6 @@ class TestConfig(BaseModel):
     device: str
     checkpoint_load_file: Optional[str]
     batch_size: int
-    plot_col_size: int
-    plot_row_size: int
-    plot_img_size: float
       
 
 class Config(BaseModel):
