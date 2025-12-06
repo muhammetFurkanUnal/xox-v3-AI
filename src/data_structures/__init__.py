@@ -1,2 +1,3 @@
 from .train_results import TrainResults
-from .dataset_row import DatasetRow
+from .raw_dataset_row import RawDatasetRow
+from .clean_dataset_row import CleanDatasetRow

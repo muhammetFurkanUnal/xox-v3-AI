@@ -7,7 +7,10 @@ from typing import Optional, List
 class DataConfig(BaseModel):
     batch_size: int
     seed: int
-    save_path: Optional[str]
+    gather_save_folder: Optional[str]
+    interim_save_folder: Optional[str]
+    clean_save_folder: Optional[str]
+    aug_save_folder: Optional[str]
     
 
 class TrainConfig(BaseModel):

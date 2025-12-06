@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from ..game import GameState, Player
 
-class DatasetRow(BaseModel):
+class RawDatasetRow(BaseModel):
 
 	pos1: int  # 1:X, -1: O, 0: empty
 	pos2: int
@@ -14,6 +14,6 @@ class DatasetRow(BaseModel):
 	pos9: int
 	winner: int  # 1: X, -1: O, 0: no one 
 	draw: int  # 0: not draw, 1: draw
-	next_player: int
-	turn_who: int  # 1: X, -1: O
+	move_number: int
+	next_player: int  # 1: X, -1: O
 	game_id: str

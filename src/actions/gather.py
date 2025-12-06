@@ -2,7 +2,7 @@ from ..game import XOXGame, Player, GameState
 from ..game.exceptions import *
 from ..core import clear_terminal
 import time
-from ..data_structures import DatasetRow
+from ..data_structures import RawDatasetRow
 import os
 import csv
 from pathlib import Path
@@ -28,7 +28,7 @@ def recieve_pos(pos_str):
 	return position
 
 
-def state_to_csv_row(state: GameState) -> DatasetRow:
+def state_to_csv_row(state: GameState) -> RawDatasetRow:
 
 	PLAYER_TO_INT = {
     Player.x: 1,
@@ -40,17 +40,17 @@ def state_to_csv_row(state: GameState) -> DatasetRow:
 		f"pos{i}": PLAYER_TO_INT[p] for i, p in enumerate(state.board, 1)
 	}
 
-	return DatasetRow(
+	return RawDatasetRow(
 		**board_data,
 		winner=PLAYER_TO_INT[state.winner],
 		draw=int(state.draw),  # True -> 1, False -> 0
 		move_number=state.turn_num,
-		who_played=PLAYER_TO_INT[state.turn_who],
+		next_player=PLAYER_TO_INT[state.turn_who],
 		game_id=state.game_id
 	)
 
 
-def append_dataset(row: DatasetRow, path: str):
+def append_dataset(row: RawDatasetRow, path: str):
 	directory = Path(path).parent
 	os.makedirs(directory, exist_ok=True)
 	file_exists = os.path.isfile(path)
@@ -103,5 +103,6 @@ def gather_loop(dataset_file_path):
 		clear_terminal()
 		print(game)
 		print(f"Game over!\nWinner: {game.winner.value}")
-		time.sleep(1)
+		print(game.get_state())
+		time.sleep(60)
 
