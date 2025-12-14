@@ -15,7 +15,5 @@ scripts/*
 videos
 config.yaml
 
-src/models/*
-!src/models/templates
 
 TODO

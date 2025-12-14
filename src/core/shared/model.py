@@ -5,27 +5,34 @@ from pathlib import Path
 from typing import Optional, List
 
 class DataConfig(BaseModel):
-    batch_size: int
-    seed: int
+    batch_size: Optional[int]
+    num_workers: Optional[int]
+    seed: Optional[int]
     gather_save_folder: Optional[str]
     interim_save_folder: Optional[str]
     clean_save_folder: Optional[str]
     aug_save_folder: Optional[str]
+    train_test_ratio: Optional[float]
+
+
+class ModelConfig(BaseModel):
+    model_folder_name: Optional[str]
     
 
 class TrainConfig(BaseModel):
-    device: str
-    epoch: int
-    lr: float
+    device: Optional[str]
+    epoch: Optional[int]
+    lr: Optional[float]
+    dataset_load_file: Optional[str]
     checkpoint_load_file: Optional[str]
     checkpoint_save_name: Optional[str]
     checkpoint_frequency: Optional[int]
     
 
 class TestConfig(BaseModel):
-    device: str
+    device: Optional[str]
     checkpoint_load_file: Optional[str]
-    batch_size: int
+    batch_size: Optional[int]
       
 
 class Config(BaseModel):

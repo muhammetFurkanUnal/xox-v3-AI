@@ -62,8 +62,7 @@ def main():
 
 
     elif shared.mode == Mode.TRAIN:
-        # write your train procedure here
-        pass
+        start_training()
 
         
     elif shared.mode == Mode.TEST:
