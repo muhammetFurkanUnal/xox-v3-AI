@@ -3,7 +3,8 @@ import pytorch_lightning as pl
 from pytorch_lightning.loggers import CSVLogger
 from pytorch_lightning.callbacks import ModelCheckpoint
 from ..core.shared import shared
-from ..ai_models import AIModelProvider, AIModel
+from ..ai_models import AIModelProvider
+import os
 
 # uncomment if using agentic mode
 # from ..ai_models import AIModel, configure_optimizers, build_datasets, loss_function
@@ -14,7 +15,11 @@ model_provider = AIModelProvider(shared.config.model.model_folder_name)
 class PLWrapper(pl.LightningModule):
 	def __init__(self):
 		super().__init__()
-		self.model = model_provider.get_architecture()((9, 64, 128, 256, 9))
+
+		architecture = model_provider.get_architecture()
+		layers = (9, 64, 128, 256, 9)
+		self.model = architecture(layers)
+		
 		self.criterion = model_provider.get_loss_function()
 
 
@@ -53,7 +58,7 @@ class PLWrapper(pl.LightningModule):
 			logits = output[0] if isinstance(output, tuple) else output
 			loss = self.criterion(logits, target)
 
-		self.log(f"{stage}_loss", loss, prog_bar=True, logger=True)
+		self.log(f"{stage}_loss", loss, on_step=False, on_epoch=True, prog_bar=True, logger=True)
 		return loss
 
 	def training_step(self, batch, batch_idx):
@@ -136,7 +141,7 @@ def start_training():
 		dirpath=f"./outputs/{save_name}/checkpoints",
 		filename="{epoch:04d}",
 		monitor=None,
-		every_n_epochs=5,
+		every_n_epochs=shared.config.train.checkpoint_frequency,
 		save_top_k=-1,
 	)
 
@@ -149,4 +154,16 @@ def start_training():
 		log_every_n_steps=1
 	)
 
-	trainer.fit(model, datamodule=UniversalDataModule())
+	trainer.fit(
+		model, 
+		datamodule=UniversalDataModule(),
+		ckpt_path=shared.config.train.checkpoint_load_file
+		)
+	
+	metrics_path = f"./outputs/{save_name}/metrics.csv"
+	new_file_name = f"loss_history_epoch-{shared.config.train.epoch}"
+	new_file_path = f"./outputs/{save_name}/{new_file_name}.csv"
+	os.rename(metrics_path, new_file_path)
+	
+
+
