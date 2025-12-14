@@ -2,14 +2,20 @@ from torch.utils.data import DataLoader
 import pytorch_lightning as pl
 from pytorch_lightning.loggers import CSVLogger
 from pytorch_lightning.callbacks import ModelCheckpoint
-from ..models import MLP, configure_optimizers, build_datasets, loss_function
 from ..core.shared import shared
+from ..ai_models import AIModelProvider, AIModel
+
+# uncomment if using agentic mode
+# from ..ai_models import AIModel, configure_optimizers, build_datasets, loss_function
+
+
+model_provider = AIModelProvider(shared.config.model.model_folder_name)
 
 class PLWrapper(pl.LightningModule):
 	def __init__(self):
 		super().__init__()
-		self.model = MLP((9, 64, 128, 256, 9))
-		self.criterion = loss_function()
+		self.model = model_provider.get_architecture()((9, 64, 128, 256, 9))
+		self.criterion = model_provider.get_loss_function()
 
 
 	def forward(self, x):
@@ -18,7 +24,8 @@ class PLWrapper(pl.LightningModule):
 	
 
 	def configure_optimizers(self):
-		return configure_optimizers(model=self)
+		configure_optimizer = model_provider.get_configure_optimizer()
+		return configure_optimizer(model=self)
 	
 
 	def _shared_step(self, batch, stage):
@@ -65,7 +72,7 @@ class UniversalDataModule(pl.LightningDataModule):
             cfg: All configuration (data path, batch_size, workers etc.)
         """
         super().__init__()
-        self.builder_fn = build_datasets
+        self.builder_fn = model_provider.get_data_module()
         self.cfg = shared.config
         
         self.train_ds = None

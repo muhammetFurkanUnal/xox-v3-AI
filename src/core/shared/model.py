@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from enum import Enum
 from pathlib import Path
 from typing import Optional, List
+from ...ai_models import AIModel
 
 class DataConfig(BaseModel):
     batch_size: Optional[int]
@@ -16,7 +17,7 @@ class DataConfig(BaseModel):
 
 
 class ModelConfig(BaseModel):
-    model_folder_name: Optional[str]
+    model_folder_name: Optional[AIModel]
     
 
 class TrainConfig(BaseModel):
@@ -37,6 +38,7 @@ class TestConfig(BaseModel):
 
 class Config(BaseModel):
     data: DataConfig
+    model: ModelConfig
     train: TrainConfig
     test: TestConfig
     
